@@ -3,6 +3,7 @@ import pygame as pg
 import random
 from settings import *
 from sprites import *
+from os import path
 
 class Platformer:
     def __init__(self):
@@ -14,6 +15,20 @@ class Platformer:
         self.clock = pg.time.Clock()
         self.running = True
         self.font_name = pg.font.match_font(FONT_NAME)
+        self.load_data()
+
+    def load_data(self):
+        # load high score
+        self.dir = path.dirname(__file__)
+        img_dir = path.join(self.dir, "imgs")
+        try:
+            with open(path.join(self.dir, HS_FILE), "r") as f:
+                self.highscore = int(f.read())
+        except:
+            with open(path.join(self.dir, HS_FILE), "w") as f:
+                self.highscore = int(f.read())
+        # load spritesheet image
+        self.spritesheet = Spritesheet(path.join(img_dir, SPRITESHEET))
 
     def new(self):
         # start a new game
@@ -89,7 +104,7 @@ class Platformer:
         self.screen.fill(BGCOLOR)
         self.all_sprites.draw(self.screen)
         self.draw_text(str(self.score), 22, WHITE, WIDTH/2, 15)
-        # *after* drawing everything, flip the display
+        # after drawing everything, flip the display
         pg.display.flip()
 
     def show_start_screen(self):
@@ -98,6 +113,7 @@ class Platformer:
         self.draw_text(TITLE, 50, WHITE, WIDTH/2, HEIGHT/4)
         self.draw_text("Arrows to move, Space to jump", 22, WHITE, WIDTH/2, HEIGHT/2)
         self.draw_text("Press any key to play", 22, WHITE, WIDTH/2, HEIGHT*3/4)
+        self.draw_text("High Score: " + str(self.highscore), 22, WHITE, WIDTH/2, 15)
         pg.display.flip()
         self.wait_for_key()
 
@@ -109,6 +125,13 @@ class Platformer:
         self.draw_text("Game Over", 50, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("Score: " + str(self.score), 22, WHITE, WIDTH / 2, HEIGHT / 2)
         self.draw_text("Press any key to play again", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        if self.score > self.highscore and self.score:
+            self.highscore = self.score
+            self.draw_text("New High Score!", 22, WHITE, WIDTH/2, HEIGHT/2+40)
+            with open(path.join(self.dir, HS_FILE), "w") as f:
+                f.write(str(self.score))
+        else:
+            self.draw_text("High Score: " + str(self.highscore), 22, WHITE, WIDTH / 2, HEIGHT/2+40)
         pg.display.flip()
         self.wait_for_key()
 
@@ -119,7 +142,7 @@ class Platformer:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     waiting = False
-                    running = False
+                    self.running = False
                 if event.type == pg.KEYUP:
                     waiting = False
 
