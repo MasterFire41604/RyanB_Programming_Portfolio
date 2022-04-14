@@ -22,29 +22,41 @@ class Game:
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, "img")
         self.map = Map(path.join(game_folder, "map2.txt"))
-        self.player_img = pg.image  .load(path.join(img_folder, PLAYER_IMG)).convert()
+        self.player_img = pg.image.load(path.join(img_folder, PLAYER_IMG)).convert()
+        self.bullet_img = pg.image.load(path.join(img_folder, BULLET_IMG)).convert()
+        self.bullet_img = pg.transform.scale(self.bullet_img, (10, 10))
+        self.mob_img = pg.image.load(path.join(img_folder, MOB_IMG)).convert()
+        self.wall_img = pg.image.load(path.join(img_folder, WALL_IMG)).convert()
+        self.wall_img = pg.transform.scale(self.wall_img, (TILESIZE, TILESIZE))
 
     def new(self):
         # start a new game
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
+        self.mobs = pg.sprite.Group()
+        self.bullets = pg.sprite.Group()
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
                 if tile == "1":
                     Wall(self, col, row)
+                if tile == "M":
+                    Mob(self, col, row)
                 if tile == "P":
                     self.player = Player(self, col, row)
         self.camera = Camera(self.map.width, self.map.height)
-        self.run()
 
     def run(self):
         # Game Loop
         self.playing = True
         while self.playing:
-            self.dt = self.clock.tick(FPS)
+            self.dt = self.clock.tick(FPS) / 1000.0
             self.events()
             self.update()
             self.draw()
+
+    def quit(self):
+        pg.quit()
+        sys.exit()
 
     def events(self):
         # Game Loop - events
@@ -59,6 +71,10 @@ class Game:
         # Game Loop - Update
         self.all_sprites.update()
         self.camera.update(self.player)
+        # Bullets hit mobs
+        hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
+        for hit in hits:
+            hit.kill()
 
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
@@ -67,9 +83,10 @@ class Game:
             pg.draw.line(self.screen, WHITE, (0, y), (WIDTH, y))
 
     def draw(self):
+        pg.display.set_caption("{:.2f}".format((self.clock.get_fps())))
         # Game Loop - draw
-        self.screen.fill(BLACK)
-        self.draw_grid()
+        self.screen.fill(BROWN)
+        # self.draw_grid()
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
         # pg .draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
@@ -87,6 +104,7 @@ g = Game()
 g.show_start_screen()
 while g.running:
     g.new()
+    g.run()
     g.show_go_screen()
 
 pg.quit()
