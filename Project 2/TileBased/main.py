@@ -39,29 +39,43 @@ class Game:
     def load_data(self):
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, "img")
-        self.map = Map(path.join(game_folder, "map2.txt"))
+        map_folder = path.join(game_folder, "maps")
+        self.map = TiledMap(path.join(map_folder, "tileMap.tmx"))
+        self.map_img = self.map.make_map()
+        self.map_rect = self.map_img.get_rect()
         self.player_img = pg.image.load(path.join(img_folder, PLAYER_IMG)).convert()
         self.bullet_img = pg.image.load(path.join(img_folder, BULLET_IMG)).convert()
         self.bullet_img = pg.transform.scale(self.bullet_img, (10, 10))
         self.mob_img = pg.image.load(path.join(img_folder, MOB_IMG)).convert()
         self.wall_img = pg.image.load(path.join(img_folder, WALL_IMG)).convert()
         self.wall_img = pg.transform.scale(self.wall_img, (TILESIZE, TILESIZE))
+        self.gun_flashes = []
+        for img in MUZZLE_FLASHES:
+            self.gun_flashes.append(pg.image.load(path.join(img_folder, img)). convert_alpha())
 
     def new(self):
         # start a new game
-        self.all_sprites = pg.sprite.Group()
+        self.all_sprites = pg.sprite.LayeredUpdates()
         self.walls = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
-        for row, tiles in enumerate(self.map.data):
-            for col, tile in enumerate(tiles):
-                if tile == "1":
-                    Wall(self, col, row)
-                if tile == "M":
-                    Mob(self, col, row)
-                if tile == "P":
-                    self.player = Player(self, col, row)
+        # for row, tiles in enumerate(self.map.data):
+        #     for col, tile in enumerate(tiles):
+        #         if tile == "1":
+        #             Wall(self, col, row)
+        #         if tile == "M":
+        #             Mob(self, col, row)
+        #         if tile == "P":
+        #             self.player = Player(self, col, row)
+        for tile_object in self.map.tmxdata.objects:
+            if tile_object.name == "Player":
+                self.player = Player(self, tile_object.x, tile_object.y)
+            if tile_object.name == "Wall":
+                Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+            if tile_object.name == "Zombie":
+                Mob(self, tile_object.x, tile_object.y)
         self.camera = Camera(self.map.width, self.map.height)
+        self.draw_debug = False
 
     def run(self):
         # Game Loop
@@ -83,6 +97,9 @@ class Game:
             if event.type == pg.QUIT:
                 if self.playing:
                     self.playing = False
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_h:
+                    self.draw_debug = not self.draw_debug
                 self.running = False
 
     def update(self):
@@ -114,12 +131,18 @@ class Game:
     def draw(self):
         pg.display.set_caption("{:.2f}".format((self.clock.get_fps())))
         # Game Loop - draw
-        self.screen.fill(BROWN)
+        # self.screen.fill(BROWN)
+        self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         # self.draw_grid()
         for sprite in self.all_sprites:
             if isinstance(sprite, Mob):
                 sprite.draw_health()
             self.screen.blit(sprite.image, self.camera.apply(sprite))
+            if self.draw_debug:
+                pg.draw.rect(self.screen, BLUE, self.camera.apply_rect(sprite.hit_rect), 1)
+            if self.draw_debug:
+                for wall in self.walls:
+                    pg.draw.rect(self.screen, BLUE, self.camera.apply_rect(wall.rect), 1)
         # pg .draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
         # HUD functions
         draw_player_health(self.screen, 10, 10, self.player.health/PLAYER_HEALTH)
