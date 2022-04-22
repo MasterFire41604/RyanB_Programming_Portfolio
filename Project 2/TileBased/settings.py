@@ -55,6 +55,7 @@ DETECT_RADIUS = 400
 MUZZLE_FLASHES = ["whitePuff15.png", "whitePuff16.png", "whitePuff17.png", "whitePuff18.png"]
 FLASH_DURATION = 40
 SPLAT = "splat green.png"
+DAMAGE_ALPHA = [i for i in range(0, 255, 25)]
 
 # Layers
 WALL_LAYER = 1
@@ -82,6 +83,12 @@ WEAPON_SOUNDS = {"pistol": ["pistol.wav"],
 EFFECTS_SOUNDS = {"level_start": "level_start.wav",
                   "health_up": "health_pack.wav",
                   "gun_pickup": "gun_pickup.wav"}
+
+# Volume
+ZOMBIE_MOAN_SOUNDS_VOL = 0.1
+ZOMBIE_HIT_SOUNDS_VOL = 0.3
+WEAPON_SOUNDS_VOL = 0.1
+EFFECTS_SOUNDS_VOL = 0.3
 
 # define colors
 WHITE = (255, 255, 255)
