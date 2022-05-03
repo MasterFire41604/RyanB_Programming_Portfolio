@@ -18,6 +18,7 @@ class Game:
         self.font_name = pg.font.match_font(FONT_NAME)
         self.player1_score = 0
         self.player2_score = 0
+        self.bricks_left = 0
 
     def new(self):
         # start a new game
@@ -28,12 +29,11 @@ class Game:
         self.grows = pg.sprite.Group()
 
         self.player = Player()
-        bricks = []
-        for i in range(3):
-            self.brick = Bricks(BRICK_WIDTH*i, BRICK_HEIGHT)
-            self.bricks.add(self.brick)
-            self.all_sprites.add(self.brick)
-            bricks.append(self.brick)
+        for place in BRICK_PLACEMENT:
+            brick = Bricks(*place)
+            self.bricks_left += 1
+            self.bricks.add(brick)
+            self.all_sprites.add(brick)
         self.all_sprites.add(self.player)
         self.run()
 
@@ -57,17 +57,93 @@ class Game:
             self.ball.speed += 0.05
 
         # If ball hits bricks
-        hit = pg.sprite.groupcollide(self.ball_sprite, self.bricks, False, True)
-        if hit:
-            for hits in hit:
-                if self.ball.dy < 0:
-                    if hits.rect.bottom > self.ball.rect.top:
-                        if hits.rect.left-0.01 < self.ball.rect.left and hits.rect.right+0.01 > self.ball.rect.right:
-                            self.ball.dy = abs(self.ball.dy)
-                else:
-                    if hits.rect.top < self.ball.rect.bottom:
-                        if hits.rect.left-0.01 < self.ball.rect.left and hits.rect.right+0.01 > self.ball.rect.right:
-                            self.ball.dy = -(abs(self.ball.dy))
+        been_hit = []
+        if self.ball_spawned:
+            hit = pg.sprite.spritecollide(self.ball, self.bricks, False)
+            if hit:
+                bottom = False
+                top = False
+                right = False
+                left = False
+                for hits in hit:
+                    if self.ball.dy < 0 or bottom:
+                        if hits.rect.y+BRICK_HEIGHT/2 < self.ball.rect.y:
+                            if hits.rect.x-BRICK_WIDTH < self.ball.rect.x < hits.rect.x+BRICK_WIDTH:
+                                self.ball.dy = abs(self.ball.dy)
+                                hits.kill()
+                                if not top and not right and not left:
+                                    self.bricks_left -= 1
+                                bottom = True
+                                # Chance for powerup to fall
+                                if random.randrange(100) < POWERUP_SPAWN_CHANCE:
+                                    randomNum = random.randint(0, 2)
+                                    if randomNum == 0:
+                                        self.shrink = Shrink(hits.rect.x+BRICK_WIDTH/2, hits.rect.y+BRICK_HEIGHT/2)
+                                        self.shrinks.add(self.shrink)
+                                        self.all_sprites.add(self.shrink)
+                                    if randomNum == 1:
+                                        self.grow = Grow(hits.rect.x+BRICK_WIDTH/2, hits.rect.y+BRICK_HEIGHT/2)
+                                        self.grows.add(self.grow)
+                                        self.all_sprites.add(self.grow)
+                    elif self.ball.dy > 0 or top:
+                        if hits.rect.y-BRICK_HEIGHT/2 > self.ball.rect.y:
+                            if hits.rect.x-BRICK_WIDTH < self.ball.rect.x < hits.rect.x+BRICK_WIDTH:
+                                self.ball.dy = -(abs(self.ball.dy))
+                                hits.kill()
+                                self.bricks_left -= 1
+                                if not bottom and not right and not left:
+                                    top = True
+                                # Chance for powerup to fall
+                                if random.randrange(100) < POWERUP_SPAWN_CHANCE:
+                                    randomNum = random.randint(0, 2)
+                                    if randomNum == 0:
+                                        self.shrink = Shrink(hits.rect.x+BRICK_WIDTH/2, hits.rect.y+BRICK_HEIGHT/2)
+                                        self.shrinks.add(self.shrink)
+                                        self.all_sprites.add(self.shrink)
+                                    if randomNum == 1:
+                                        self.grow = Grow(hits.rect.x+BRICK_WIDTH/2, hits.rect.y+BRICK_HEIGHT/2)
+                                        self.grows.add(self.grow)
+                                        self.all_sprites.add(self.grow)
+                    if self.ball.dx > 0 or left:
+                        if hits.rect.x-BRICK_WIDTH/2 > self.ball.rect.x:
+                            if hits.rect.y-BRICK_HEIGHT < self.ball.rect.y < hits.rect.y+BRICK_HEIGHT:
+                                self.ball.dx = -(abs(self.ball.dx))
+                                hits.kill()
+                                if not top and not right and not bottom:
+                                    self.bricks_left -= 1
+                                left = True
+                                # Chance for powerup to fall
+                                if random.randrange(100) < POWERUP_SPAWN_CHANCE:
+                                    randomNum = random.randint(0, 2)
+                                    if randomNum == 0:
+                                        self.shrink = Shrink(hits.rect.x + BRICK_WIDTH / 2,
+                                                             hits.rect.y + BRICK_HEIGHT / 2)
+                                        self.shrinks.add(self.shrink)
+                                        self.all_sprites.add(self.shrink)
+                                    if randomNum == 1:
+                                        self.grow = Grow(hits.rect.x + BRICK_WIDTH / 2, hits.rect.y + BRICK_HEIGHT / 2)
+                                        self.grows.add(self.grow)
+                                        self.all_sprites.add(self.grow)
+                    elif self.ball.dx < 0 or right:
+                        if hits.rect.x+BRICK_WIDTH/2 < self.ball.rect.x:
+                            if hits.rect.y-BRICK_HEIGHT < self.ball.rect.y < hits.rect.y+BRICK_HEIGHT:
+                                self.ball.dx = abs(self.ball.dx)
+                                hits.kill()
+                                if not top and not bottom and not left:
+                                    self.bricks_left -= 1
+                                right = True
+                                # Chance for powerup to fall
+                                if random.randrange(100) < POWERUP_SPAWN_CHANCE:
+                                    randomNum = random.randint(0, 2)
+                                    if randomNum == 0:
+                                        self.shrink = Shrink(hits.rect.x + BRICK_WIDTH / 2,
+                                                             hits.rect.y + BRICK_HEIGHT / 2)
+                                        self.shrinks.add(self.shrink)
+                                        self.all_sprites.add(self.shrink)
+                                    if randomNum == 1:
+                                        self.grow = Grow(hits.rect.x + BRICK_WIDTH / 2, hits.rect.y + BRICK_HEIGHT / 2)
+                                        self.grows.add(self.grow)
+                                        self.all_sprites.add(self.grow)
 
         # If player hits shrink powerdown
         hit = pg.sprite.spritecollide(self.player, self.shrinks, True)
@@ -98,6 +174,7 @@ class Game:
     def draw(self):
         # Game Loop - draw
         self.screen.fill(BLACK)
+        self.draw_text(str(self.bricks_left), 50, WHITE, WIDTH/2, HEIGHT/2)
         self.all_sprites.draw(self.screen)
 
         # After drawing everything, flip the display

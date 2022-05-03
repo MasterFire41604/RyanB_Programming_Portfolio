@@ -10,7 +10,6 @@ class Player(pg.sprite.Sprite):
         self.image = pg.Surface((PLAYER_WIDTH, PLAYER_HEIGHT))
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH / 2, HEIGHT / 2)
         self.pos = vec(WIDTH/2, HEIGHT - 40)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
@@ -45,16 +44,14 @@ class Player(pg.sprite.Sprite):
             self.image = pg.Surface((self.width, PLAYER_HEIGHT))
             self.image.fill(WHITE)
             self.rect = self.image.get_rect()
-            self.rect.center = (WIDTH / 2, HEIGHT / 2)
-            self.pos = vec(self.pos.x, HEIGHT - 40)
+            self.rect.center = self.pos
 
     def grow(self):
         self.width += 25
         self.image = pg.Surface((self.width, PLAYER_HEIGHT))
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH / 2, HEIGHT / 2)
-        self.pos = vec(self.pos.x, HEIGHT - 40)
+        self.rect.center = self.pos
 
 
 class Ball(pg.sprite.Sprite):
@@ -65,7 +62,8 @@ class Ball(pg.sprite.Sprite):
         self.image = pg.Surface((self.size, self.size))
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH/2, HEIGHT/2)
+        self.rect.x = x
+        self.rect.y = y
         self.pos = vec(x, y)
         self.dx = dx
         self.dy = dy
@@ -88,34 +86,6 @@ class Ball(pg.sprite.Sprite):
 
         self.rect.center = self.pos
 
-    def shrink(self):
-        if self.size == 25:
-            self.size = 13.5
-            self.image = pg.Surface((self.size, self.size))
-            self.image.fill(RED)
-            self.rect = self.image.get_rect()
-            self.rect.center = (WIDTH / 2, HEIGHT / 2)
-        else:
-            self.size = 25
-            self.image = pg.Surface((25, 25))
-            self.image.fill(WHITE)
-            self.rect = self.image.get_rect()
-            self.rect.center = (WIDTH / 2, HEIGHT / 2)
-
-    def grow(self):
-        if self.size == 25:
-            self.size = 50
-            self.image = pg.Surface((self.size, self.size))
-            self.image.fill(GREEN)
-            self.rect = self.image.get_rect()
-            self.rect.center = (WIDTH / 2, HEIGHT / 2)
-        else:
-            self.size = 25
-            self.image = pg.Surface((25, 25))
-            self.image.fill(WHITE)
-            self.rect = self.image.get_rect()
-            self.rect.center = (WIDTH / 2, HEIGHT / 2)
-
 
 class Bricks(pg.sprite.Sprite):
     def __init__(self, x, y):
@@ -123,8 +93,8 @@ class Bricks(pg.sprite.Sprite):
         self.image = pg.Surface((BRICK_WIDTH, BRICK_HEIGHT))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
-        self.rect.center = (self.rect.width/2, self.rect.height/2)
-        self.pos = vec(x, y)
+        self.rect.x = x
+        self.rect.y = y
 
 
 class Shrink(pg.sprite.Sprite):
@@ -133,7 +103,8 @@ class Shrink(pg.sprite.Sprite):
         self.image = pg.Surface((20, 20))
         self.image.fill(RED)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH/2, HEIGHT/2)
+        self.rect.x = x
+        self.rect.y = y
         self.pos = vec(x, y)
         self.speedY = 1
 
@@ -149,7 +120,8 @@ class Grow(pg.sprite.Sprite):
         self.image = pg.Surface((20, 20))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH/2, HEIGHT*(3/4))
+        self.rect.x = x
+        self.rect.y = y
         self.pos = vec(x, y)
         self.speedY = 1
 
