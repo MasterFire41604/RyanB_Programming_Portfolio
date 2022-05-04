@@ -10,7 +10,6 @@ class Player(pg.sprite.Sprite):
         self.image = pg.Surface((PLAYER_WIDTH, PLAYER_HEIGHT))
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH / 2, HEIGHT / 2)
         self.pos = vec(40, HEIGHT / 2)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
@@ -45,16 +44,14 @@ class Player(pg.sprite.Sprite):
             self.image = pg.Surface((PLAYER_WIDTH, self.height))
             self.image.fill(WHITE)
             self.rect = self.image.get_rect()
-            self.rect.center = (WIDTH / 2, HEIGHT / 2)
-            self.pos = vec(40, self.pos.y)
+            self.rect.center = self.pos
 
     def grow(self):
         self.height += 25
         self.image = pg.Surface((PLAYER_WIDTH, self.height))
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH / 2, HEIGHT / 2)
-        self.pos = vec(40, self.pos.y)
+        self.rect.center = self.pos
 
 
 class Player2(pg.sprite.Sprite):
@@ -63,7 +60,6 @@ class Player2(pg.sprite.Sprite):
         self.image = pg.Surface((PLAYER_WIDTH, PLAYER_HEIGHT))
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH / 2, HEIGHT / 2)
         self.pos = vec(WIDTH-40, HEIGHT / 2)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
@@ -98,17 +94,14 @@ class Player2(pg.sprite.Sprite):
             self.image = pg.Surface((PLAYER_WIDTH, self.height))
             self.image.fill(WHITE)
             self.rect = self.image.get_rect()
-            self.rect.center = (WIDTH / 2, HEIGHT / 2)
-            self.pos = vec(WIDTH - 40, self.pos.y)
+            self.rect.center = self.pos
 
     def grow(self):
         self.height += 25
         self.image = pg.Surface((PLAYER_WIDTH, self.height))
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH / 2, HEIGHT / 2)
-        self.pos = vec(WIDTH - 40, self.pos.y)
-
+        self.rect.center = self.pos
 
 class BackgroundLine(pg.sprite.Sprite):
     def __init__(self):
@@ -128,7 +121,6 @@ class Ball(pg.sprite.Sprite):
         self.image = pg.Surface((self.size, self.size))
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        self.rect.center = (WIDTH/2, HEIGHT/2)
         self.pos = vec(WIDTH/2, HEIGHT/2)
         self.dx = dx
         self.dy = dy
@@ -169,14 +161,14 @@ class Ball(pg.sprite.Sprite):
             self.image = pg.Surface((self.size, self.size))
             self.image.fill(RED)
             self.rect = self.image.get_rect()
-            self.rect.center = (WIDTH / 2, HEIGHT / 2)
+            self.rect.center = self.pos
             self.game.powerup_status = -1
         else:
             self.size = 25
             self.image = pg.Surface((25, 25))
             self.image.fill(WHITE)
             self.rect = self.image.get_rect()
-            self.rect.center = (WIDTH / 2, HEIGHT / 2)
+            self.rect.center = self.pos
             self.game.powerup_status = 0
 
     def grow(self):
@@ -185,14 +177,14 @@ class Ball(pg.sprite.Sprite):
             self.image = pg.Surface((self.size, self.size))
             self.image.fill(GREEN)
             self.rect = self.image.get_rect()
-            self.rect.center = (WIDTH / 2, HEIGHT / 2)
+            self.rect.center = self.pos
             self.game.powerup_status = 1
         else:
             self.size = 25
             self.image = pg.Surface((25, 25))
             self.image.fill(WHITE)
             self.rect = self.image.get_rect()
-            self.rect.center = (WIDTH / 2, HEIGHT / 2)
+            self.rect.center = self.pos
             self.game.powerup_status = 0
 
 
