@@ -5,3 +5,8 @@
 * Press space to shoot
 * Destroy the asteroids
 * Collect the powerups that drop
+
+
+--------------------------------
+* Installations needed to Play *
+--------------------------------
