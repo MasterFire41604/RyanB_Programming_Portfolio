@@ -9,22 +9,21 @@ class Player(pg.sprite.Sprite):
         self.game = game
         self.image = game.player_img
         self.rect = self.image.get_rect()
+        self.rect.height = self.rect.height-6
         self.vel = vec(0, 0)
+        self.acc = vec(0, 0)
         self.pos = vec(x, y) * TILESIZE
 
     def get_keys(self):
-        self.vel = vec(0, 0)
         keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT] or keys[pg.K_a]:
-            self.vel.x = -PLAYER_SPEED
-        if keys[pg.K_RIGHT] or keys[pg.K_d]:
-            self.vel.x = PLAYER_SPEED
-        if keys[pg.K_UP] or keys[pg.K_w]:
-            self.vel.y = -PLAYER_SPEED
-        if keys[pg.K_DOWN] or keys[pg.K_s]:
-            self.vel.y = PLAYER_SPEED
-        if self.vel.x != 0 and self.vel.y != 0:
-            self.vel *= 0.7071
+        if keys[pg.K_LEFT]:
+            self.acc.x = -PLAYER_ACC
+        if keys[pg.K_RIGHT]:
+            self.acc.x = PLAYER_ACC
+
+    def jump(self):
+        self.vel.y = -8
+
 
     def collide_with_walls(self, dir):
         if dir == 'x':
@@ -47,12 +46,21 @@ class Player(pg.sprite.Sprite):
                 self.rect.y = self.pos.y
 
     def update(self):
+        self.acc = vec(0, PLAYER_GRAV)
         self.get_keys()
-        self.pos += self.vel * self.game.dt
-        self.rect.x = self.pos.x
-        self.collide_with_walls('x')
-        self.rect.y = self.pos.y
-        self.collide_with_walls('y')
+        # self.pos += self.vel * self.game.dt
+        # self.rect.x = self.pos.x
+        # self.collide_with_walls('x')
+        # self.rect.y = self.pos.y
+        # self.collide_with_walls('y')
+
+        # Apply friction
+        self.acc.x += self.vel.x * PLAYER_FRICTION
+        # Equations of motion
+        self.vel += self.acc
+        self.pos += self.vel + 0.5 * self.acc
+
+        self.rect.center = self.pos
 
 class Wall(pg.sprite.Sprite):
     def __init__(self, game, x, y):
