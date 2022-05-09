@@ -10,6 +10,8 @@ class Player(pg.sprite.Sprite):
         self.image = game.player_img
         self.rect = self.image.get_rect()
         self.rect.height = self.rect.height-6
+        self.rect.width = self.rect.width-2
+        pg.draw.rect(self.image, (255, 255, 255), self.rect, 5)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
         self.pos = vec(x, y) * TILESIZE

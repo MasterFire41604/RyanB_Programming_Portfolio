@@ -53,30 +53,56 @@ class Game:
         self.camera.update(self.player)
         hits = pg.sprite.spritecollide(self.player, self.walls, False)
         if hits:
-            if self.player.rect.bottom >= hits[0].rect.top and self.player.vel.y > 0: #and not\
-                    # (self.player.rect.centerx > hits[0].rect.centerx+hits[0].rect.width*1.5
-                    #  or self.player.rect.centerx < hits[0].rect.centerx-hits[0].rect.width*1.5):
+            if self.player.rect.bottom >= hits[0].rect.top and self.player.vel.y > 0 and not\
+                    (self.player.rect.left > hits[0].rect.right-3
+                     or self.player.rect.right < hits[0].rect.left+3):
                 self.player.pos.y = hits[0].rect.top - self.player.rect.height/2
                 self.player.vel.y = 0
                 print("top")
-            if self.player.rect.top <= hits[0].rect.bottom and self.player.vel.y < 0: #and not\
-                    # (self.player.rect.centerx > hits[0].rect.centerx+hits[0].rect.width*1.5
-                    #  or self.player.rect.centerx < hits[0].rect.centerx-hits[0].rect.width*1.5):
+            elif self.player.rect.top <= hits[0].rect.bottom and self.player.vel.y < 0 and not\
+                    (self.player.rect.left > hits[0].rect.right-3
+                     or self.player.rect.right < hits[0].rect.left+3):
                 self.player.pos.y = hits[0].rect.bottom + self.player.rect.height/2
                 self.player.vel.y = 0
                 print("bottom")
-            if self.player.rect.right <= hits[0].rect.centerx and self.player.vel.x > 0: #and not\
-                    # (self.player.rect.centery > hits[0].rect.centery+hits[0].rect.height
-                    #  or self.player.rect.centery < hits[0].rect.centery-hits[0].rect.height):
+
+            if self.player.rect.right <= hits[0].rect.centerx and self.player.vel.x > 0 and not\
+                    (self.player.rect.top > hits[0].rect.bottom-3
+                     or self.player.rect.bottom < hits[0].rect.top+3):
                 self.player.pos.x = hits[0].rect.left - self.player.rect.width/2
                 print("left")
                 self.player.vel.x = 0
-            if self.player.rect.left >= hits[0].rect.centerx and self.player.vel.x < 0: #and not\
-                    # (self.player.rect.centery > hits[0].rect.centery+hits[0].rect.height
-                    #  or self.player.rect.centery < hits[0].rect.centery-hits[0].rect.height):
+            elif self.player.rect.left >= hits[0].rect.centerx and self.player.vel.x < 0 and not\
+                    (self.player.rect.top > hits[0].rect.bottom-3
+                     or self.player.rect.bottom < hits[0].rect.top+3):
                 self.player.pos.x = hits[0].rect.right + self.player.rect.width/2
                 self.player.vel.x = 0
                 print("right")
+
+    # def collideX(self):
+    #     hits = pg.sprite.spritecollide(self.player, self.walls, False)
+    #     if hits:
+    #         if self.player.vel.x > 0:
+    #             self.player.rect.right = hits[0].rect.left
+    #             self.player.pos.x = hits[0].rect.left - self.player.rect.width/2
+    #             print("left")
+    #         if self.player.vel.x < 0:
+    #             self.player.rect.left = hits[0].rect.right
+    #             self.player.pos.x = hits[0].rect.right + self.player.rect.width/2
+    #             print("right")
+    #         self.player.vel.x = 0
+    #
+    # def collideY(self):
+    #     hits = pg.sprite.spritecollide(self.player, self.walls, False)
+    #     if hits:
+    #         if self.player.vel.y > 0:
+    #             self.player.rect.bottom = hits[0].rect.top
+    #             print("top")
+    #         if self.player.vel.y < 0:
+    #             self.player.rect.top = hits[0].rect.bottom
+    #             print("bottom")
+    #         self.player.vel.y = 0
+
 
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
