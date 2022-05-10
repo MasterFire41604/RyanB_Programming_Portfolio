@@ -1,4 +1,3 @@
-import pygame as pg
 import pytmx as pytmx
 
 from settings import *

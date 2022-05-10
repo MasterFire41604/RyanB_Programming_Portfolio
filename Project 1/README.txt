@@ -10,3 +10,6 @@
 --------------------------------
 * Installations needed to Play *
 --------------------------------
+* You need python (My version is 3.10.0)
+* You need to intall pygame in the terminal
+	- open the command prompt and type in this command: pip install pygame

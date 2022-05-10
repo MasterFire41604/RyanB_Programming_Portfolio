@@ -1,4 +1,3 @@
-import pygame as pg
 from random import random, uniform, choice, randint
 from settings import *
 from tileMap import collide_hit_rect
