@@ -52,6 +52,7 @@ class Game:
         hit1 = pg.sprite.spritecollide(self.player2, self.ball_sprite, False)
         if hit1:
             self.ball.dx = -(abs(self.ball.dx))
+            self.ball.dy += self.player2.vel.y
             self.ball.speed += 0.05
             if self.powerup_status == -1:
                 self.player2.shrink()
@@ -62,6 +63,7 @@ class Game:
         hit2 = pg.sprite.spritecollide(self.player1, self.ball_sprite, False)
         if hit2:
             self.ball.dx = abs(self.ball.dx)
+            self.ball.dy += self.player1.vel.y
             self.ball.speed += 0.05
             if self.powerup_status == -1:
                 self.player1.shrink()

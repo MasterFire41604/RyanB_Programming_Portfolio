@@ -14,16 +14,17 @@ class Player(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
         self.height = PLAYER_HEIGHT
+        self.additional_speed = 0
 
     def update(self):
         self.acc = vec(0, 0)
         keys = pg.key.get_pressed()
         if not self.pos.y <= 0 + PLAYER_HEIGHT/2:
             if keys[pg.K_w]:
-                self.acc.y = -PLAYER_ACC
+                self.acc.y = -PLAYER_ACC - abs(self.additional_speed)
         if not self.pos.y >= HEIGHT - PLAYER_HEIGHT/2:
             if keys[pg.K_s]:
-                self.acc.y = PLAYER_ACC
+                self.acc.y = PLAYER_ACC + abs(self.additional_speed)
 
         # apply friction
         self.acc += self.vel * PLAYER_FRICTION
@@ -45,6 +46,9 @@ class Player(pg.sprite.Sprite):
             self.image.fill(WHITE)
             self.rect = self.image.get_rect()
             self.rect.center = self.pos
+            if self.rect.height <= PLAYER_HEIGHT:
+                self.additional_speed += 0.25
+                print("1: " + str(self.additional_speed))
 
     def grow(self):
         self.height += 25
@@ -52,6 +56,10 @@ class Player(pg.sprite.Sprite):
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
+        self.additional_speed -= 0.25
+        if self.additional_speed < 0:
+            self.additional_speed = 0
+        print("1: " + str(self.additional_speed))
 
 
 class Player2(pg.sprite.Sprite):
@@ -64,16 +72,17 @@ class Player2(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
         self.height = PLAYER_HEIGHT
+        self.additional_speed = 0
 
     def update(self):
         self.acc = vec(0, 0)
         keys = pg.key.get_pressed()
         if not self.pos.y <= 0 + PLAYER_HEIGHT/2:
             if keys[pg.K_UP]:
-                self.acc.y = -PLAYER_ACC
+                self.acc.y = -PLAYER_ACC - abs(self.additional_speed)
         if not self.pos.y >= HEIGHT - PLAYER_HEIGHT/2:
             if keys[pg.K_DOWN]:
-                self.acc.y = PLAYER_ACC
+                self.acc.y = PLAYER_ACC + abs(self.additional_speed)
 
         # apply friction
         self.acc += self.vel * PLAYER_FRICTION
@@ -95,6 +104,9 @@ class Player2(pg.sprite.Sprite):
             self.image.fill(WHITE)
             self.rect = self.image.get_rect()
             self.rect.center = self.pos
+            if self.rect.height <= PLAYER_HEIGHT:
+                self.additional_speed += 0.25
+                print("2: " + str(self.additional_speed))
 
     def grow(self):
         self.height += 25
@@ -102,6 +114,10 @@ class Player2(pg.sprite.Sprite):
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
+        self.additional_speed -= 0.25
+        if self.additional_speed < 0:
+            self.additional_speed = 0
+        print("2: " + str(self.additional_speed))
 
 class BackgroundLine(pg.sprite.Sprite):
     def __init__(self):
